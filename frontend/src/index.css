@@ -1,7 +1,69 @@
 @import "tailwindcss";
 
+@theme {
+  --color-tss-red: #e11b22;
+  --color-tss-black: #111111;
+  --color-tss-gray: #f5f5f5;
+  --color-tss-dark-gray: #58595b;
+  --color-tss-success: #117a7a;
+
+  --font-ubuntu: 'Ubuntu', sans-serif;
+  --font-roboto: 'Roboto', sans-serif;
+}
+
+.admin-dark {
+  --color-white: #0f172a;
+  --color-gray-50: #1e293b;
+  --color-gray-100: #334155;
+  --color-gray-200: #475569;
+  --color-gray-300: #64748b;
+  --color-gray-400: #94a3b8;
+  --color-gray-500: #cbd5e1;
+  --color-gray-600: #e2e8f0;
+  --color-gray-700: #f1f5f9;
+  --color-gray-800: #f8fafc;
+  --color-gray-900: #ffffff;
+  --color-slate-950: #020617;
+  --color-red-50: #450a0a;
+  --color-red-100: #7f1d1d;
+  --color-green-50: #052e16;
+  --color-green-100: #14532d;
+  --color-yellow-50: #422006;
+  --color-yellow-100: #713f12;
+}
+
+
 #root {
-  font-family: 'Inter', sans-serif;
-  font-optical-sizing: auto;
+  font-family: var(--font-roboto);
   font-style: normal;
+  background-color: #ffffff;
+  color: var(--color-tss-black);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-heading {
+  font-family: var(--font-ubuntu);
+}
+
+/* Custom Scrollbar for a polished look */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-tss-red);
 }
