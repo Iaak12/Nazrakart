@@ -34,15 +34,28 @@ const app = express();
 const allowedOrigins = [
     'http://localhost:5173',
     'http://localhost:5174',
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'https://nazrakart.vercel.app'
 ];
 
 if (process.env.FRONTEND_URL) {
-    allowedOrigins.push(process.env.FRONTEND_URL);
+    // Trim trailing slash to avoid mismatch
+    const cleanUrl = process.env.FRONTEND_URL.replace(/\/$/, '');
+    if (!allowedOrigins.includes(cleanUrl)) {
+        allowedOrigins.push(cleanUrl);
+    }
 }
 
 app.use(cors({
-    origin: allowedOrigins,
+    origin: function (origin, callback) {
+        // Allow requests with no origin (Postman, server-to-server)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
 }));
 app.use(express.json());
