@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { MdSave, MdAdd, MdDelete, MdDragIndicator } from 'react-icons/md';
+import HeadingSelector from '../../components/Admin/HeadingSelector';
 
 const HomeManagement = () => {
     const { getToken } = useAuth();
@@ -69,9 +70,9 @@ const HomeManagement = () => {
 
     const addItem = (tab) => {
         let newItem = {};
-        if (tab === 'banners') newItem = { image: '', mobileImage: '', link: '', alt: 'New Banner' };
-        if (tab === 'categories') newItem = { name: 'New Category', image: '', path: '' };
-        if (tab === 'franchises') newItem = { name: 'New franchise', image: '', bgImage: '', path: '', color: 'from-gray-900 to-black' };
+        if (tab === 'banners') newItem = { image: '', mobileImage: '', link: '', alt: 'New Banner', title: '', titleTag: 'h2' };
+        if (tab === 'categories') newItem = { name: 'New Category', image: '', path: '', nameTag: 'span' };
+        if (tab === 'franchises') newItem = { name: 'New franchise', image: '', bgImage: '', path: '', color: 'from-gray-900 to-black', nameTag: 'h3' };
 
         setFormData(prev => ({
             ...prev,
@@ -207,6 +208,25 @@ const HomeManagement = () => {
                                     {activeTab === 'banners' && (
                                         <>
                                             <div className="col-span-1 md:col-span-2">
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider">Banner Title (Optional)</label>
+                                                    <div className="flex items-center gap-1">
+                                                        <span className="text-[8px] uppercase font-black text-gray-400">Tag:</span>
+                                                        <HeadingSelector
+                                                            value={item.titleTag || 'h2'}
+                                                            onChange={(e) => handleChangeArray(activeTab, index, 'titleTag', e.target.value)}
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <input
+                                                    type="text"
+                                                    value={item.title || ''}
+                                                    onChange={(e) => handleChangeArray(activeTab, index, 'title', e.target.value)}
+                                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-tss-red focus:bg-white transition-colors"
+                                                    placeholder="e.g. SUMMER COLLECTION"
+                                                />
+                                            </div>
+                                            <div className="col-span-1 md:col-span-2">
                                                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Desktop Image URL</label>
                                                 <div className="flex gap-2">
                                                     <input
@@ -263,7 +283,16 @@ const HomeManagement = () => {
                                     {activeTab === 'categories' && (
                                         <>
                                             <div>
-                                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Display Name</label>
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider">Display Name</label>
+                                                    <div className="flex items-center gap-1">
+                                                        <span className="text-[8px] uppercase font-black text-gray-400">Tag:</span>
+                                                        <HeadingSelector
+                                                            value={item.nameTag || 'span'}
+                                                            onChange={(e) => handleChangeArray(activeTab, index, 'nameTag', e.target.value)}
+                                                        />
+                                                    </div>
+                                                </div>
                                                 <input
                                                     type="text"
                                                     value={item.name}
@@ -303,7 +332,16 @@ const HomeManagement = () => {
                                     {activeTab === 'franchises' && (
                                         <>
                                             <div>
-                                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Franchise Name</label>
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider">Franchise Name</label>
+                                                    <div className="flex items-center gap-1">
+                                                        <span className="text-[8px] uppercase font-black text-gray-400">Tag:</span>
+                                                        <HeadingSelector
+                                                            value={item.nameTag || 'h3'}
+                                                            onChange={(e) => handleChangeArray(activeTab, index, 'nameTag', e.target.value)}
+                                                        />
+                                                    </div>
+                                                </div>
                                                 <input
                                                     type="text"
                                                     value={item.name}

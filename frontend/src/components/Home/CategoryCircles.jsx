@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import DynamicHeading from '../DynamicHeading';
 
 const CategoryCircles = ({ categories = [] }) => {
     const fallbackCategories = [
@@ -43,9 +44,12 @@ const CategoryCircles = ({ categories = [] }) => {
                                         />
                                     </div>
                                 </div>
-                                <span className="text-[10px] md:text-[12px] font-black text-tss-gray-500 group-hover:text-tss-red text-center uppercase tracking-widest leading-normal transition-colors duration-300">
+                                <DynamicHeading
+                                    tag={cat.nameTag || 'span'}
+                                    className="text-[10px] md:text-[12px] font-black text-tss-gray-500 group-hover:text-tss-red text-center uppercase tracking-widest leading-normal transition-colors duration-300"
+                                >
                                     {cat.name}
-                                </span>
+                                </DynamicHeading>
                             </Link>
                         ))}
                     </div>

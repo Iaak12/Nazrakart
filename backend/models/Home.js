@@ -3,18 +3,22 @@ import mongoose from 'mongoose';
 const bannerSchema = new mongoose.Schema({
     image: { type: String, required: true },
     mobileImage: { type: String, required: true },
+    title: { type: String, default: '' },
+    titleTag: { type: String, default: 'h2' },
     link: { type: String, required: true },
     alt: { type: String, required: true }
 });
 
 const categoryCircleSchema = new mongoose.Schema({
     name: { type: String, required: true },
+    nameTag: { type: String, default: 'span' },
     image: { type: String, required: true },
     path: { type: String, required: true }
 });
 
 const franchiseSchema = new mongoose.Schema({
     name: { type: String, required: true },
+    nameTag: { type: String, default: 'h3' },
     image: { type: String }, // Optional, can be empty
     bgImage: { type: String }, // Optional
     path: { type: String, required: true },

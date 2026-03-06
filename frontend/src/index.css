@@ -88,3 +88,108 @@
     transform: translateY(0);
   }
 }
+
+/* Rich Text Content Styling */
+.rich-text-content {
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+
+.rich-text-content p {
+  margin-bottom: 0.75rem;
+}
+
+.rich-text-content p:last-child {
+  margin-bottom: 0;
+}
+
+.rich-text-content strong,
+.rich-text-content b {
+  font-weight: 900;
+  color: var(--color-tss-black, #1d1d1d);
+}
+
+.rich-text-content em,
+.rich-text-content i {
+  font-style: italic;
+}
+
+.rich-text-content ul {
+  list-style-type: disc;
+  margin-left: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.rich-text-content ol {
+  list-style-type: decimal;
+  margin-left: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.rich-text-content li {
+  margin-bottom: 0.25rem;
+}
+
+.rich-text-content a {
+  color: var(--color-tss-red, #e11b23);
+  text-decoration: none;
+}
+
+.rich-text-content a:hover {
+  text-decoration: underline;
+}
+
+.rich-text-content blockquote {
+  border-left: 4px solid var(--color-tss-gray-200, #e6e7e8);
+  padding-left: 1rem;
+  font-style: italic;
+  margin: 1rem 0;
+  color: var(--color-tss-gray-500, #58595b);
+}
+
+.rich-text-content h1,
+.rich-text-content h2,
+.rich-text-content h3,
+.rich-text-content h4 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  text-transform: none;
+  letter-spacing: -0.025em;
+
+  .rich-text-content strong,
+  .rich-text-content b {
+    font-weight: 900;
+    color: var(--color-tss-black);
+  }
+
+  .rich-text-content em,
+  .rich-text-content i {
+    font-style: italic;
+  }
+
+  .rich-text-content ul {
+    @apply list-disc ml-5 mb-4;
+  }
+
+  .rich-text-content ol {
+    @apply list-decimal ml-5 mb-4;
+  }
+
+  .rich-text-content li {
+    @apply mb-1;
+  }
+
+  .rich-text-content a {
+    @apply text-tss-red hover:underline;
+  }
+
+  .rich-text-content blockquote {
+    @apply border-l-4 border-tss-gray-200 pl-4 italic my-4 text-tss-gray-500;
+  }
+
+  .rich-text-content h1,
+  .rich-text-content h2,
+  .rich-text-content h3,
+  .rich-text-content h4 {
+    @apply mt-6 mb-2 normal-case tracking-tight;
+  }

@@ -8,6 +8,8 @@ import {
     MdAdd,
     MdQuestionAnswer
 } from 'react-icons/md';
+import HeadingSelector from '../../components/Admin/HeadingSelector';
+import RichTextEditor from '../../components/Admin/RichTextEditor';
 
 const FaqManagement = () => {
     const { getToken } = useAuth();
@@ -21,6 +23,7 @@ const FaqManagement = () => {
     const [selectedFaq, setSelectedFaq] = useState(null);
     const [formData, setFormData] = useState({
         question: '',
+        questionTag: 'span',
         answer: '',
         isActive: true,
         order: 0
@@ -59,6 +62,7 @@ const FaqManagement = () => {
         if (mode === 'edit' && faq) {
             setFormData({
                 question: faq.question,
+                questionTag: faq.questionTag || 'span',
                 answer: faq.answer,
                 isActive: faq.isActive !== undefined ? faq.isActive : true,
                 order: faq.order !== undefined ? faq.order : 0
@@ -66,6 +70,7 @@ const FaqManagement = () => {
         } else {
             setFormData({
                 question: '',
+                questionTag: 'span',
                 answer: '',
                 isActive: true,
                 order: faqs.length
@@ -268,9 +273,18 @@ const FaqManagement = () => {
 
                         <form onSubmit={handleSaveFaq} className="p-6 space-y-5">
                             <div>
-                                <label className="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">
-                                    Question *
-                                </label>
+                                <div className="flex items-center justify-between mb-2">
+                                    <label className="block text-sm font-bold text-gray-700 uppercase tracking-wider">
+                                        Question *
+                                    </label>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[10px] uppercase font-black text-gray-400">Tag:</span>
+                                        <HeadingSelector
+                                            value={formData.questionTag}
+                                            onChange={(e) => setFormData({ ...formData, questionTag: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
                                 <input
                                     type="text"
                                     required
@@ -285,12 +299,9 @@ const FaqManagement = () => {
                                 <label className="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">
                                     Answer *
                                 </label>
-                                <textarea
-                                    required
+                                <RichTextEditor
                                     value={formData.answer}
-                                    onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
-                                    rows="4"
-                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md text-gray-900 focus:outline-none focus:border-tss-red focus:bg-white transition-colors resize-y"
+                                    onChange={(content) => setFormData({ ...formData, answer: content })}
                                     placeholder="Enter the answer..."
                                 />
                             </div>

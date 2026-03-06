@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 const featureSchema = new mongoose.Schema({
     iconName: { type: String, required: true },
     title: { type: String, required: true },
+    titleTag: { type: String, default: 'h3' },
     description: { type: String, required: true }
 });
 
@@ -11,6 +12,10 @@ const aboutSchema = new mongoose.Schema({
         type: String,
         required: true,
         default: 'About NazraKart'
+    },
+    heroTitleTag: {
+        type: String,
+        default: 'h1'
     },
     heroDescription: {
         type: String,
@@ -21,6 +26,10 @@ const aboutSchema = new mongoose.Schema({
         type: String,
         required: true,
         default: 'Our Story'
+    },
+    storyTitleTag: {
+        type: String,
+        default: 'h2'
     },
     storyParagraph1: {
         type: String,
@@ -38,21 +47,25 @@ const aboutSchema = new mongoose.Schema({
             {
                 iconName: 'MdHighQuality',
                 title: 'Premium Quality',
+                titleTag: 'h3',
                 description: 'We use only the best materials to ensure our products are comfortable, durable, and look amazing.'
             },
             {
                 iconName: 'MdStorefront',
                 title: 'Exclusive Designs',
+                titleTag: 'h3',
                 description: 'Our in-house design team creates unique, eye-catching apparel you will not find anywhere else.'
             },
             {
                 iconName: 'MdPeople',
                 title: 'Community First',
+                titleTag: 'h3',
                 description: 'We are more than just a brand; we are a community of passionate fans and pop-culture enthusiasts.'
             },
             {
                 iconName: 'MdLocalShipping',
                 title: 'Fast Delivery',
+                titleTag: 'h3',
                 description: 'We work hard to get your favorite merchandise delivered to your doorstep as quickly as possible.'
             }
         ]

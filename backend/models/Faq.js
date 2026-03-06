@@ -7,6 +7,10 @@ const faqSchema = new mongoose.Schema({
         trim: true,
         maxlength: [500, 'Question cannot be more than 500 characters']
     },
+    questionTag: {
+        type: String,
+        default: 'span'
+    },
     answer: {
         type: String,
         required: [true, 'Please add an answer'],

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { MdSave, MdAdd, MdDelete } from 'react-icons/md';
+import HeadingSelector from '../../components/Admin/HeadingSelector';
+import RichTextEditor from '../../components/Admin/RichTextEditor';
 
 const AboutManagement = () => {
     const { getToken } = useAuth();
@@ -9,8 +11,10 @@ const AboutManagement = () => {
 
     const [formData, setFormData] = useState({
         heroTitle: '',
+        heroTitleTag: 'h1',
         heroDescription: '',
         storyTitle: '',
+        storyTitleTag: 'h2',
         storyParagraph1: '',
         storyParagraph2: '',
         features: []
@@ -29,8 +33,10 @@ const AboutManagement = () => {
             if (res.ok) {
                 setFormData({
                     heroTitle: data.heroTitle || '',
+                    heroTitleTag: data.heroTitleTag || 'h1',
                     heroDescription: data.heroDescription || '',
                     storyTitle: data.storyTitle || '',
+                    storyTitleTag: data.storyTitleTag || 'h2',
                     storyParagraph1: data.storyParagraph1 || '',
                     storyParagraph2: data.storyParagraph2 || '',
                     features: data.features || []
@@ -62,7 +68,7 @@ const AboutManagement = () => {
             ...prev,
             features: [
                 ...prev.features,
-                { iconName: 'MdStar', title: 'New Feature', description: 'Feature description' }
+                { iconName: 'MdStar', title: 'New Feature', titleTag: 'h3', description: 'Feature description' }
             ]
         }));
     };
@@ -127,7 +133,17 @@ const AboutManagement = () => {
                     <h2 className="text-xl font-bold text-gray-900 mb-4 uppercase tracking-wider border-b border-gray-200 pb-2">Hero Section</h2>
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-1">Hero Title</label>
+                            <div className="flex items-center justify-between mb-1">
+                                <label className="block text-sm font-bold text-gray-700">Hero Title</label>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[10px] uppercase font-black text-gray-400">Tag:</span>
+                                    <HeadingSelector
+                                        name="heroTitleTag"
+                                        value={formData.heroTitleTag}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            </div>
                             <input
                                 type="text"
                                 name="heroTitle"
@@ -138,12 +154,10 @@ const AboutManagement = () => {
                         </div>
                         <div>
                             <label className="block text-sm font-bold text-gray-700 mb-1">Hero Description</label>
-                            <textarea
-                                name="heroDescription"
+                            <RichTextEditor
                                 value={formData.heroDescription}
-                                onChange={handleChange}
-                                rows="3"
-                                className="w-full px-4 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:border-tss-red transition-colors resize-y"
+                                onChange={(content) => setFormData(prev => ({ ...prev, heroDescription: content }))}
+                                placeholder="Write the hero description here..."
                             />
                         </div>
                     </div>
@@ -154,7 +168,17 @@ const AboutManagement = () => {
                     <h2 className="text-xl font-bold text-gray-900 mb-4 uppercase tracking-wider border-b border-gray-200 pb-2">Our Story Section</h2>
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-1">Story Title</label>
+                            <div className="flex items-center justify-between mb-1">
+                                <label className="block text-sm font-bold text-gray-700">Story Title</label>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[10px] uppercase font-black text-gray-400">Tag:</span>
+                                    <HeadingSelector
+                                        name="storyTitleTag"
+                                        value={formData.storyTitleTag}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            </div>
                             <input
                                 type="text"
                                 name="storyTitle"
@@ -165,22 +189,18 @@ const AboutManagement = () => {
                         </div>
                         <div>
                             <label className="block text-sm font-bold text-gray-700 mb-1">Story Paragraph 1</label>
-                            <textarea
-                                name="storyParagraph1"
+                            <RichTextEditor
                                 value={formData.storyParagraph1}
-                                onChange={handleChange}
-                                rows="4"
-                                className="w-full px-4 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:border-tss-red transition-colors resize-y"
+                                onChange={(content) => setFormData(prev => ({ ...prev, storyParagraph1: content }))}
+                                placeholder="Write the first paragraph of our story..."
                             />
                         </div>
                         <div>
                             <label className="block text-sm font-bold text-gray-700 mb-1">Story Paragraph 2</label>
-                            <textarea
-                                name="storyParagraph2"
+                            <RichTextEditor
                                 value={formData.storyParagraph2}
-                                onChange={handleChange}
-                                rows="4"
-                                className="w-full px-4 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:border-tss-red transition-colors resize-y"
+                                onChange={(content) => setFormData(prev => ({ ...prev, storyParagraph2: content }))}
+                                placeholder="Write the second paragraph of our story..."
                             />
                         </div>
                     </div>
@@ -212,7 +232,16 @@ const AboutManagement = () => {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
-                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Title</label>
+                                        <div className="flex items-center justify-between mb-1">
+                                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider">Title</label>
+                                            <div className="flex items-center gap-1">
+                                                <span className="text-[8px] uppercase font-black text-gray-400">Tag:</span>
+                                                <HeadingSelector
+                                                    value={feature.titleTag}
+                                                    onChange={(e) => handleFeatureChange(index, 'titleTag', e.target.value)}
+                                                />
+                                            </div>
+                                        </div>
                                         <input
                                             type="text"
                                             value={feature.title}
@@ -233,11 +262,10 @@ const AboutManagement = () => {
                                 </div>
                                 <div>
                                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Description</label>
-                                    <textarea
+                                    <RichTextEditor
                                         value={feature.description}
-                                        onChange={(e) => handleFeatureChange(index, 'description', e.target.value)}
-                                        rows="2"
-                                        className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-tss-red resize-none"
+                                        onChange={(content) => handleFeatureChange(index, 'description', content)}
+                                        placeholder="Feature description..."
                                     />
                                 </div>
                             </div>

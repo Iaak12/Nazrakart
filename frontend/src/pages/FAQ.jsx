@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MdAdd, MdRemove, MdQuestionAnswer, MdSearch, MdArrowForward } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
+import DynamicHeading from '../components/DynamicHeading';
 
 const FAQ = () => {
     const [openIndex, setOpenIndex] = useState(0);
@@ -81,9 +82,12 @@ const FAQ = () => {
                                     className="w-full flex items-center justify-between p-6 md:p-8 text-left focus:outline-none group"
                                     onClick={() => setOpenIndex(openIndex === index ? -1 : index)}
                                 >
-                                    <span className={`text-[14px] md:text-[16px] font-black uppercase tracking-tight transition-colors ${openIndex === index ? 'text-tss-red' : 'text-tss-black group-hover:text-tss-red'}`}>
+                                    <DynamicHeading
+                                        tag={faq.questionTag || 'span'}
+                                        className={`text-[14px] md:text-[16px] font-black uppercase tracking-tight transition-colors ${openIndex === index ? 'text-tss-red' : 'text-tss-black group-hover:text-tss-red'}`}
+                                    >
                                         {faq.question}
-                                    </span>
+                                    </DynamicHeading>
                                     <div className={`flex-shrink-0 w-8 h-8 rounded-sm flex items-center justify-center transition-all ${openIndex === index ? 'bg-tss-red text-white' : 'bg-tss-gray-100 text-tss-gray-400'}`}>
                                         {openIndex === index ? <MdRemove size={20} /> : <MdAdd size={20} />}
                                     </div>
@@ -91,9 +95,10 @@ const FAQ = () => {
 
                                 {openIndex === index && (
                                     <div className="p-6 md:p-8 pt-0 border-t border-tss-gray-100 animate-fadeIn">
-                                        <p className="text-[14px] font-bold text-tss-gray-500 uppercase tracking-wider leading-loose">
-                                            {faq.answer}
-                                        </p>
+                                        <div
+                                            className="text-[14px] font-bold text-tss-gray-500 leading-loose rich-text-content"
+                                            dangerouslySetInnerHTML={{ __html: faq.answer }}
+                                        />
                                     </div>
                                 )}
                             </div>

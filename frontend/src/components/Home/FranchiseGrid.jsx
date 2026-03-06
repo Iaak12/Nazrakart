@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import DynamicHeading from '../DynamicHeading';
 
 const FranchiseGrid = ({ franchises = [] }) => {
     const fallbackFranchises = [
@@ -68,6 +69,10 @@ const FranchiseGrid = ({ franchises = [] }) => {
 
                             {/* Logo/Content */}
                             <div className="relative z-10 w-full h-full flex flex-col items-center justify-center p-6 text-center">
+                                {/* SEO Heading (Hidden) */}
+                                <DynamicHeading tag={franchise.nameTag || 'h3'} className="sr-only">
+                                    {franchise.name}
+                                </DynamicHeading>
                                 <div className="w-4/5 transform group-hover:-translate-y-4 transition-transform duration-500">
                                     <img
                                         src={franchise.image}

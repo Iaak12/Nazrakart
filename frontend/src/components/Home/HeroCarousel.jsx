@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
+import DynamicHeading from '../DynamicHeading';
 
 const HeroCarousel = ({ banners = [] }) => {
     const fallbackBanners = [
@@ -50,11 +51,11 @@ const HeroCarousel = ({ banners = [] }) => {
                     <div
                         key={banner._id || index}
                         className={`absolute inset-0 transition-all duration-1000 ease-in-out transform ${index === currentSlide
-                                ? 'opacity-100 scale-100 z-10'
-                                : 'opacity-0 scale-105 z-0'
+                            ? 'opacity-100 scale-100 z-10'
+                            : 'opacity-0 scale-105 z-0'
                             }`}
                     >
-                        <Link to={banner.link} className="block w-full h-full">
+                        <Link to={banner.link} className="block w-full h-full relative">
                             {/* Desktop Image */}
                             <img
                                 src={banner.image}
@@ -68,6 +69,17 @@ const HeroCarousel = ({ banners = [] }) => {
                                 alt={banner.alt}
                                 className="md:hidden w-full h-full object-cover"
                             />
+                            {/* Banner Title Overlay (if provided) */}
+                            {banner.title && (
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors">
+                                    <DynamicHeading
+                                        tag={banner.titleTag || 'h2'}
+                                        className="text-white text-3xl md:text-5xl font-black uppercase tracking-tighter italic drop-shadow-lg"
+                                    >
+                                        {banner.title}
+                                    </DynamicHeading>
+                                </div>
+                            )}
                         </Link>
                     </div>
                 ))}
@@ -100,8 +112,8 @@ const HeroCarousel = ({ banners = [] }) => {
                         key={index}
                         onClick={() => setCurrentSlide(index)}
                         className={`transition-all duration-500 ease-out h-[3px] rounded-full ${index === currentSlide
-                                ? 'w-10 bg-tss-red'
-                                : 'w-4 bg-white/40 hover:bg-white/80'
+                            ? 'w-10 bg-tss-red'
+                            : 'w-4 bg-white/40 hover:bg-white/80'
                             }`}
                         aria-label={`Go to slide ${index + 1}`}
                     />

@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { MdSpeed, MdSecurity, MdLocalShipping, MdSupportAgent, MdStar, MdCheckCircle } from 'react-icons/md';
-import { useSettings } from '../context/SettingsContext';
+import { MdHighQuality, MdStorefront, MdPeople, MdLocalShipping, MdSupportAgent, MdStar, MdCheckCircle } from 'react-icons/md';
 import SEO from '../components/SEO';
+import DynamicHeading from '../components/DynamicHeading';
 
 const AboutUs = () => {
     const [aboutData, setAboutData] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchAbout = async () => {
+        const fetchAboutData = async () => {
             try {
                 const res = await fetch(`${import.meta.env.VITE_API_URL}/api/about`);
                 const data = await res.json();
@@ -16,21 +16,21 @@ const AboutUs = () => {
                     setAboutData(data);
                 }
             } catch (error) {
-                console.error('Error fetching about data:', error);
+                console.error('Failed to fetch About Us data:', error);
             } finally {
                 setLoading(false);
             }
         };
-        fetchAbout();
+        fetchAboutData();
     }, []);
 
-    const getIcon = (iconName, className) => {
+    const getIcon = (iconName) => {
         switch (iconName) {
-            case 'MdSpeed': return <MdSpeed className={className} />;
-            case 'MdSecurity': return <MdSecurity className={className} />;
-            case 'MdLocalShipping': return <MdLocalShipping className={className} />;
-            case 'MdSupportAgent': return <MdSupportAgent className={className} />;
-            default: return <MdStar className={className} />;
+            case 'MdHighQuality': return <MdHighQuality size={32} />;
+            case 'MdStorefront': return <MdStorefront size={32} />;
+            case 'MdPeople': return <MdPeople size={32} />;
+            case 'MdLocalShipping': return <MdLocalShipping size={32} />;
+            default: return <MdHighQuality size={32} />;
         }
     };
 
@@ -42,28 +42,67 @@ const AboutUs = () => {
         );
     }
 
-    if (!aboutData) return <div className="text-center py-20 text-tss-gray-500 font-bold uppercase tracking-widest">No content available</div>;
+    // Use default data if fetch fails or is empty
+    const data = aboutData || {
+        heroTitle: "About NazraKart",
+        heroTitleTag: "h1",
+        heroDescription: "We are your ultimate destination for premium pop-culture merchandise. Our mission is to bring your favorite characters, movies, and TV shows to life through high-quality apparel and accessories.",
+        storyTitle: "Our Story",
+        storyTitleTag: "h2",
+        storyParagraph1: "Founded with a passion for pop culture and a commitment to quality, NazraKart started as a small idea that grew into a massive community. We noticed a gap in the market for merchandise that was both stylish and comfortable, so we decided to create our own.",
+        storyParagraph2: "Today, we partner with top franchises and independent artists to bring you an ever-expanding catalog of exclusive designs. Whether you are a superhero fanatic, an anime lover, or a gaming enthusiast, we have something special just for you.",
+        features: [
+            { iconName: 'MdHighQuality', title: 'Premium Quality', titleTag: 'h3', description: 'We use only the best materials to ensure our products are comfortable, durable, and look amazing.' },
+            { iconName: 'MdStorefront', title: 'Exclusive Designs', titleTag: 'h3', description: 'Our in-house design team creates unique, eye-catching apparel you will not find anywhere else.' },
+            { iconName: 'MdPeople', title: 'Community First', titleTag: 'h3', description: 'We are more than just a brand; we are a community of passionate fans and pop-culture enthusiasts.' },
+            { iconName: 'MdLocalShipping', title: 'Fast Delivery', titleTag: 'h3', description: 'We work hard to get your favorite merchandise delivered to your doorstep as quickly as possible.' }
+        ]
+    };
 
     return (
         <div className="bg-white min-h-screen pb-24">
             <SEO pageName="about" />
 
             {/* Hero Section */}
-            <div className="bg-tss-gray-100 py-20 md:py-32 border-b border-tss-gray-200">
-                <div className="tss-container text-center max-w-4xl mx-auto">
-                    <span className="text-tss-red font-black text-[12px] uppercase tracking-[0.3em] mb-6 block">Our Story</span>
-                    <h1 className="text-4xl md:text-6xl font-black text-tss-black uppercase tracking-tight mb-8 leading-[1.1]">
-                        {aboutData.heroTitle}
-                    </h1>
-                    <p className="text-[14px] md:text-[16px] text-tss-gray-500 font-bold uppercase tracking-wider leading-relaxed">
-                        {aboutData.heroDescription}
-                    </p>
+            <div className="bg-tss-black text-white py-24 md:py-40 relative overflow-hidden">
+                <div className="tss-container relative z-10 text-center max-w-4xl mx-auto">
+                    <DynamicHeading
+                        tag={data.heroTitleTag}
+                        className="text-4xl md:text-7xl font-black uppercase tracking-tighter italic mb-8"
+                    >
+                        {data.heroTitle.split(' ').map((word, i) => (
+                            <span key={i} className={i === data.heroTitle.split(' ').length - 1 ? "text-tss-red" : ""}>
+                                {word}{' '}
+                            </span>
+                        ))}
+                    </DynamicHeading>
+                    <div
+                        className="text-sm md:text-lg font-bold opacity-60 leading-relaxed max-w-2xl mx-auto rich-text-content"
+                        dangerouslySetInnerHTML={{ __html: data.heroDescription }}
+                    />
                 </div>
+                <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
             </div>
 
-            {/* Content Section */}
-            <div className="tss-container py-24">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+            {/* Story Section */}
+            <section className="py-24 md:py-32 tss-container">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                    <div>
+                        <DynamicHeading
+                            tag={data.storyTitleTag}
+                            className="text-3xl md:text-5xl font-black uppercase tracking-tight mb-8"
+                        >
+                            {data.storyTitle.split(' ').map((word, i) => (
+                                <span key={i} className={i === 0 ? "text-tss-red" : ""}>
+                                    {word}{' '}
+                                </span>
+                            ))}
+                        </DynamicHeading>
+                        <div className="space-y-6 text-tss-gray-500 font-bold text-[14px] leading-loose rich-text-content">
+                            <div dangerouslySetInnerHTML={{ __html: data.storyParagraph1 }} />
+                            <div dangerouslySetInnerHTML={{ __html: data.storyParagraph2 }} />
+                        </div>
+                    </div>
                     <div className="relative group">
                         <div className="aspect-[4/5] bg-tss-gray-50 rounded-sm overflow-hidden border border-tss-gray-200 shadow-2xl transition-transform duration-500 group-hover:-translate-y-2">
                             <img
@@ -74,33 +113,8 @@ const AboutUs = () => {
                         </div>
                         <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-tss-red -z-10 rounded-sm"></div>
                     </div>
-
-                    <div className="space-y-10">
-                        <div className="space-y-4">
-                            <h2 className="text-3xl md:text-4xl font-black text-tss-black uppercase tracking-tight">
-                                {aboutData.storyTitle}
-                            </h2>
-                            <div className="w-20 h-2 bg-tss-red"></div>
-                        </div>
-
-                        <div className="space-y-6 text-tss-gray-500 font-medium leading-loose text-[15px]">
-                            <p>{aboutData.storyParagraph1}</p>
-                            <p>{aboutData.storyParagraph2}</p>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-8 pt-8">
-                            <div className="border-l-4 border-tss-green pl-6">
-                                <p className="text-3xl font-black text-tss-black">10M+</p>
-                                <p className="text-[10px] font-black text-tss-gray-400 uppercase tracking-widest mt-1">Happy Customers</p>
-                            </div>
-                            <div className="border-l-4 border-[#117a7a] pl-6">
-                                <p className="text-3xl font-black text-tss-black">500+</p>
-                                <p className="text-[10px] font-black text-tss-gray-400 uppercase tracking-widest mt-1">Designers Hub</p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
-            </div>
+            </section>
 
             {/* Why Choose Us */}
             <div className="bg-tss-gray-50 py-24 border-y border-tss-gray-200">
@@ -117,9 +131,10 @@ const AboutUs = () => {
                                     {getIcon(feature.iconName, "w-8 h-8 text-current")}
                                 </div>
                                 <h3 className="text-[14px] font-black text-tss-black uppercase tracking-widest mb-4">{feature.title}</h3>
-                                <p className="text-[12px] font-bold text-tss-gray-400 uppercase tracking-wider leading-relaxed">
-                                    {feature.description}
-                                </p>
+                                <div
+                                    className="text-[13px] font-bold text-tss-gray-400 leading-relaxed rich-text-content"
+                                    dangerouslySetInnerHTML={{ __html: feature.description }}
+                                />
                             </div>
                         ))}
                     </div>
