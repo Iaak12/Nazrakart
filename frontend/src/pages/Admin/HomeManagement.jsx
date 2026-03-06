@@ -6,13 +6,21 @@ const HomeManagement = () => {
     const { getToken } = useAuth();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [activeTab, setActiveTab] = useState('banners'); // banners, categories, franchises
+    const [activeTab, setActiveTab] = useState('banners'); // banners, categories, franchises, seo
     const [uploadingField, setUploadingField] = useState(null);
 
     const [formData, setFormData] = useState({
         banners: [],
         categories: [],
-        franchises: []
+        franchises: [],
+        seo: {
+            home: { metaTitle: '', metaDescription: '', metaKeywords: '' },
+            about: { metaTitle: '', metaDescription: '', metaKeywords: '' },
+            contact: { metaTitle: '', metaDescription: '', metaKeywords: '' },
+            shop: { metaTitle: '', metaDescription: '', metaKeywords: '' },
+            faq: { metaTitle: '', metaDescription: '', metaKeywords: '' },
+            careers: { metaTitle: '', metaDescription: '', metaKeywords: '' }
+        }
     });
 
     useEffect(() => {
@@ -29,7 +37,8 @@ const HomeManagement = () => {
                 setFormData({
                     banners: data.banners || [],
                     categories: data.categories || [],
-                    franchises: data.franchises || []
+                    franchises: data.franchises || [],
+                    seo: data.seo || formData.seo
                 });
             }
         } catch (error) {
@@ -43,6 +52,19 @@ const HomeManagement = () => {
         const newArray = [...formData[tab]];
         newArray[index] = { ...newArray[index], [field]: value };
         setFormData(prev => ({ ...prev, [tab]: newArray }));
+    };
+
+    const handleSeoChange = (page, field, value) => {
+        setFormData(prev => ({
+            ...prev,
+            seo: {
+                ...prev.seo,
+                [page]: {
+                    ...prev.seo[page],
+                    [field]: value
+                }
+            }
+        }));
     };
 
     const addItem = (tab) => {
@@ -144,7 +166,7 @@ const HomeManagement = () => {
 
                 {/* Tabs */}
                 <div className="flex border-b border-gray-200 mb-8 overflow-x-auto hide-scrollbar">
-                    {['banners', 'categories', 'franchises'].map(tab => (
+                    {['banners', 'categories', 'franchises', 'seo'].map(tab => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
@@ -161,19 +183,21 @@ const HomeManagement = () => {
                 <div className="space-y-6">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-xl font-bold text-gray-900 uppercase tracking-widest">
-                            Manage {activeTab}
+                            {activeTab === 'seo' ? 'Manage Global SEO Meta Tags' : `Manage ${activeTab}`}
                         </h2>
-                        <button
-                            type="button"
-                            onClick={() => addItem(activeTab)}
-                            className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-sm font-bold uppercase rounded hover:bg-gray-800 transition-colors"
-                        >
-                            <MdAdd size={18} /> Add New
-                        </button>
+                        {activeTab !== 'seo' && (
+                            <button
+                                type="button"
+                                onClick={() => addItem(activeTab)}
+                                className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-sm font-bold uppercase rounded hover:bg-gray-800 transition-colors"
+                            >
+                                <MdAdd size={18} /> Add New
+                            </button>
+                        )}
                     </div>
 
                     <div className="space-y-6">
-                        {formData[activeTab].map((item, index) => (
+                        {activeTab !== 'seo' && formData[activeTab].map((item, index) => (
                             <div key={index} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm relative group flex gap-4">
                                 <div className="text-gray-300 cursor-move pt-2 flex-shrink-0">
                                     <MdDragIndicator size={24} />
@@ -352,7 +376,51 @@ const HomeManagement = () => {
                             </div>
                         ))}
 
-                        {formData[activeTab].length === 0 && (
+                        {activeTab === 'seo' && (
+                            <div className="space-y-8">
+                                <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md text-yellow-800 text-sm font-medium">
+                                    <p>These settings inject dynamic meta tags (&lt;title&gt;, &lt;meta description&gt;, &lt;meta keywords&gt;) into the specific pages to improve overall SEO.</p>
+                                </div>
+                                {['home', 'about', 'contact', 'shop', 'faq', 'careers'].map(page => (
+                                    <div key={page} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm relative group space-y-4">
+                                        <h3 className="text-lg font-black text-gray-900 uppercase tracking-widest border-b border-gray-100 pb-2 mb-4">
+                                            {page} Page SEO
+                                        </h3>
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Meta Title</label>
+                                            <input
+                                                type="text"
+                                                value={formData.seo[page]?.metaTitle || ''}
+                                                onChange={(e) => handleSeoChange(page, 'metaTitle', e.target.value)}
+                                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-tss-red focus:bg-white transition-colors"
+                                                placeholder={`e.g. ${page.charAt(0).toUpperCase() + page.slice(1)} - NazraKart`}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Meta Keywords</label>
+                                            <input
+                                                type="text"
+                                                value={formData.seo[page]?.metaKeywords || ''}
+                                                onChange={(e) => handleSeoChange(page, 'metaKeywords', e.target.value)}
+                                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-tss-red focus:bg-white transition-colors"
+                                                placeholder="e.g. merchandise, apparel, accessories"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Meta Description</label>
+                                            <textarea
+                                                value={formData.seo[page]?.metaDescription || ''}
+                                                onChange={(e) => handleSeoChange(page, 'metaDescription', e.target.value)}
+                                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-tss-red focus:bg-white transition-colors min-h-[100px]"
+                                                placeholder="Brief description of the page content for search engines..."
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {activeTab !== 'seo' && formData[activeTab].length === 0 && (
                             <div className="text-center py-12 bg-white rounded-xl border border-gray-200 border-dashed">
                                 <p className="text-gray-500">No {activeTab} defined yet.</p>
                                 <button

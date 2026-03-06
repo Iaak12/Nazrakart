@@ -21,6 +21,21 @@ const franchiseSchema = new mongoose.Schema({
     color: { type: String } // e.g., 'from-red-900 to-red-600'
 });
 
+const seoPageSchema = new mongoose.Schema({
+    metaTitle: { type: String, default: '' },
+    metaDescription: { type: String, default: '' },
+    metaKeywords: { type: String, default: '' },
+});
+
+const seoSchema = new mongoose.Schema({
+    home: { type: seoPageSchema, default: () => ({}) },
+    about: { type: seoPageSchema, default: () => ({}) },
+    contact: { type: seoPageSchema, default: () => ({}) },
+    shop: { type: seoPageSchema, default: () => ({}) },
+    faq: { type: seoPageSchema, default: () => ({}) },
+    careers: { type: seoPageSchema, default: () => ({}) },
+});
+
 const homeSchema = new mongoose.Schema({
     banners: {
         type: [bannerSchema],
@@ -33,6 +48,10 @@ const homeSchema = new mongoose.Schema({
     franchises: {
         type: [franchiseSchema],
         default: []
+    },
+    seo: {
+        type: seoSchema,
+        default: () => ({})
     }
 }, {
     timestamps: true

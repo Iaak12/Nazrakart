@@ -1,69 +1,90 @@
 @import "tailwindcss";
 
 @theme {
-  --color-tss-red: #e11b22;
-  --color-tss-black: #111111;
-  --color-tss-gray: #f5f5f5;
-  --color-tss-dark-gray: #58595b;
-  --color-tss-success: #117a7a;
+  /* The Souled Store Inspired Color Palette */
+  --color-tss-red: #e11b23;
+  --color-tss-pink: #fde8e8;
+  --color-tss-green: #117a7a;
+  --color-tss-light-green: #e1f5f5;
+  --color-tss-black: #1d1d1d;
+  --color-tss-gray-100: #f0f0f0;
+  --color-tss-gray-200: #e6e7e8;
+  --color-tss-gray-500: #58595b;
+  --color-tss-yellow: #ffc700;
 
-  --font-ubuntu: 'Ubuntu', sans-serif;
-  --font-roboto: 'Roboto', sans-serif;
+  /* Premium Typography */
+  --font-heading: 'Ubuntu', sans-serif;
+  --font-body: 'Inter', sans-serif;
 }
 
-.admin-dark {
-  --color-white: #0f172a;
-  --color-gray-50: #1e293b;
-  --color-gray-100: #334155;
-  --color-gray-200: #475569;
-  --color-gray-300: #64748b;
-  --color-gray-400: #94a3b8;
-  --color-gray-500: #cbd5e1;
-  --color-gray-600: #e2e8f0;
-  --color-gray-700: #f1f5f9;
-  --color-gray-800: #f8fafc;
-  --color-gray-900: #ffffff;
-  --color-slate-950: #020617;
-  --color-red-50: #450a0a;
-  --color-red-100: #7f1d1d;
-  --color-green-50: #052e16;
-  --color-green-100: #14532d;
-  --color-yellow-50: #422006;
-  --color-yellow-100: #713f12;
+@layer base {
+  body {
+    @apply font-body bg-white text-tss-black antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading font-bold uppercase tracking-wide;
+  }
 }
 
+@layer components {
+  .tss-container {
+    @apply max-w-[1240px] mx-auto px-4;
+  }
 
-#root {
-  font-family: var(--font-roboto);
-  font-style: normal;
-  background-color: #ffffff;
-  color: var(--color-tss-black);
-}
+  .tss-button-primary {
+    @apply bg-tss-red text-white font-bold py-3 px-8 uppercase tracking-widest text-sm transition-all duration-300 hover:bg-[#c4151b] active:scale-95;
+  }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-.font-heading {
-  font-family: var(--font-ubuntu);
+  .tss-button-outline {
+    @apply border-2 border-tss-red text-tss-red font-bold py-3 px-8 uppercase tracking-widest text-sm transition-all duration-300 hover:bg-tss-red hover:text-white active:scale-95;
+  }
+
+  .tss-card {
+    @apply bg-white border border-gray-100 rounded-sm overflow-hidden transition-all duration-300 hover:shadow-xl;
+  }
+
+  .tss-badge-tribe {
+    @apply bg-tss-light-green text-tss-green text-[10px] font-black px-2 py-0.5 rounded-sm uppercase flex items-center gap-1;
+  }
 }
 
 /* Custom Scrollbar for a polished look */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #fdfdfd;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
+  background: #dbdbdb;
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-tss-red);
+}
+
+/* Smooth Transitions for Page Content */
+.fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

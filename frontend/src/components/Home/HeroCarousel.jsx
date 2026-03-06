@@ -1,87 +1,113 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 
 const HeroCarousel = ({ banners = [] }) => {
     const fallbackBanners = [
         {
-            _id: 1,
+            _id: 'fb1',
             image: 'https://prod-img.thesouledstore.com/public/theSoul/storage/mobile-cms-media-prod/banner-images/Homepage-Banner_7_R5uTbdT.jpg?format=webp&w=1500&dpr=1.0',
             mobileImage: 'https://prod-img.thesouledstore.com/public/theSoul/storage/mobile-cms-media-prod/banner-images/Hompage-Banner_3_b6e4Fto.jpg?format=webp&w=480&dpr=1.0',
             link: '/shop?theme=Marvel',
             alt: 'Marvel Official Merchandise'
+        },
+        {
+            _id: 'fb2',
+            image: 'https://prod-img.thesouledstore.com/public/theSoul/storage/mobile-cms-media-prod/banner-images/Homepage-banner-generic.jpg?format=webp&w=1500&dpr=1.0',
+            mobileImage: 'https://prod-img.thesouledstore.com/public/theSoul/storage/mobile-cms-media-prod/banner-images/mobile-banner-generic.jpg?format=webp&w=480&dpr=1.0',
+            link: '/shop',
+            alt: 'New Arrivals'
         }
     ];
 
     const displayBanners = banners && banners.length > 0 ? banners : fallbackBanners;
-
     const [currentSlide, setCurrentSlide] = useState(0);
+    const [isHovered, setIsHovered] = useState(false);
 
-    // Auto-advance slides
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setCurrentSlide((prev) => (prev === displayBanners.length - 1 ? 0 : prev + 1));
-        }, 5000);
-        return () => clearInterval(timer);
+    const nextSlide = useCallback(() => {
+        setCurrentSlide((prev) => (prev === displayBanners.length - 1 ? 0 : prev + 1));
     }, [displayBanners.length]);
 
-    const nextSlide = () => setCurrentSlide(prev => prev === displayBanners.length - 1 ? 0 : prev + 1);
-    const prevSlide = () => setCurrentSlide(prev => prev === 0 ? displayBanners.length - 1 : prev - 1);
+    const prevSlide = () => {
+        setCurrentSlide((prev) => (prev === 0 ? displayBanners.length - 1 : prev - 1));
+    };
+
+    useEffect(() => {
+        if (isHovered) return;
+        const timer = setInterval(nextSlide, 5000);
+        return () => clearInterval(timer);
+    }, [nextSlide, isHovered]);
 
     return (
-        <div className="relative w-full overflow-hidden group">
-            {/* Aspect Ratio Container: 2.5:1 Desktop, 1:1.2 Mobile roughly */}
-            <div className="relative w-full pb-[120%] md:pb-[40%]">
+        <section
+            className="relative w-full overflow-hidden bg-tss-gray-100"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
+            {/* Aspect Ratio Container: optimized for TSS look */}
+            <div className="relative w-full aspect-[16/19] md:aspect-[2.8/1] overflow-hidden">
                 {displayBanners.map((banner, index) => (
-                    <Link
+                    <div
                         key={banner._id || index}
-                        to={banner.link}
-                        className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                        className={`absolute inset-0 transition-all duration-1000 ease-in-out transform ${index === currentSlide
+                                ? 'opacity-100 scale-100 z-10'
+                                : 'opacity-0 scale-105 z-0'
                             }`}
                     >
-                        {/* Desktop Image */}
-                        <img
-                            src={banner.image}
-                            alt={banner.alt}
-                            className="hidden md:block w-full h-full object-cover"
-                        />
-                        {/* Mobile Image */}
-                        <img
-                            src={banner.mobileImage}
-                            alt={banner.alt}
-                            className="md:hidden w-full h-full object-cover"
-                        />
-                    </Link>
+                        <Link to={banner.link} className="block w-full h-full">
+                            {/* Desktop Image */}
+                            <img
+                                src={banner.image}
+                                alt={banner.alt}
+                                className="hidden md:block w-full h-full object-cover"
+                                loading={index === 0 ? "eager" : "lazy"}
+                            />
+                            {/* Mobile Image */}
+                            <img
+                                src={banner.mobileImage || banner.image}
+                                alt={banner.alt}
+                                className="md:hidden w-full h-full object-cover"
+                            />
+                        </Link>
+                    </div>
                 ))}
+
+                {/* Left/Right Overlays for Gradient Hint */}
+                <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-black/10 to-transparent z-20 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-black/10 to-transparent z-20 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity"></div>
             </div>
 
-            {/* Navigation Arrows */}
-            <button
-                onClick={prevSlide}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white text-gray-800 p-3 opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-sm"
-            >
-                <MdChevronLeft size={36} />
-            </button>
-            <button
-                onClick={nextSlide}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white text-gray-800 p-3 opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-sm"
-            >
-                <MdChevronRight size={36} />
-            </button>
+            {/* Navigation Arrows - Premium Styling */}
+            <div className="absolute inset-0 flex items-center justify-between px-4 z-30 pointer-events-none">
+                <button
+                    onClick={prevSlide}
+                    className="pointer-events-auto h-12 w-12 flex items-center justify-center bg-white/90 hover:bg-tss-red hover:text-white text-tss-black rounded-full shadow-xl transition-all duration-300 -translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
+                >
+                    <MdChevronLeft size={32} />
+                </button>
+                <button
+                    onClick={nextSlide}
+                    className="pointer-events-auto h-12 w-12 flex items-center justify-center bg-white/90 hover:bg-tss-red hover:text-white text-tss-black rounded-full shadow-xl transition-all duration-300 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
+                >
+                    <MdChevronRight size={32} />
+                </button>
+            </div>
 
-            {/* Dots */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+            {/* Pagination Dots - TSS Bar Style */}
+            <div className="absolute bottom-6 left-0 right-0 z-30 flex justify-center items-center gap-3">
                 {displayBanners.map((_, index) => (
                     <button
                         key={index}
                         onClick={() => setCurrentSlide(index)}
-                        className={`transition-all duration-300 ${index === currentSlide ? 'w-8 h-[3px] bg-white' : 'w-4 h-[3px] bg-white/50 hover:bg-white/80'
+                        className={`transition-all duration-500 ease-out h-[3px] rounded-full ${index === currentSlide
+                                ? 'w-10 bg-tss-red'
+                                : 'w-4 bg-white/40 hover:bg-white/80'
                             }`}
                         aria-label={`Go to slide ${index + 1}`}
                     />
                 ))}
             </div>
-        </div>
+        </section>
     );
 };
 

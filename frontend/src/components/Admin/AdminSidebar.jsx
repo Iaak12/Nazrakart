@@ -15,7 +15,8 @@ import {
   MdQuestionAnswer,
   MdInfo,
   MdHome,
-  MdFavorite
+  MdFavorite,
+  MdPayment
 } from 'react-icons/md';
 
 const AdminSidebar = () => {
@@ -25,6 +26,7 @@ const AdminSidebar = () => {
     { to: '/admin', icon: MdDashboard, label: 'Dashboard', end: true },
     { to: '/admin/products', icon: MdInventory, label: 'Products' },
     { to: '/admin/orders', icon: MdShoppingCart, label: 'Orders' },
+    { to: '/admin/payments', icon: MdPayment, label: 'Payments' },
     { to: '/admin/categories', icon: MdCategory, label: 'Categories' },
     { to: '/admin/themes', icon: MdPalette, label: 'Themes' },
     { to: '/admin/home', icon: MdHome, label: 'Home Page Info' },

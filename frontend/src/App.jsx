@@ -5,6 +5,7 @@ import { CartProvider } from './context/CartContext'
 import { CurrencyProvider } from './context/CurrencyContext'
 import { SettingsProvider } from './context/SettingsContext'
 import { WishlistProvider } from './context/WishlistContext'
+import { HelmetProvider } from 'react-helmet-async'
 import { Toaster } from 'react-hot-toast'
 
 // Layout components
@@ -16,6 +17,7 @@ import AdminLayout from './components/Admin/AdminLayout'
 import AdminDashboard from './pages/Admin/AdminDashboard'
 import ProductManagement from './pages/Admin/ProductManagement'
 import OrderManagement from './pages/Admin/OrderManagement'
+import PaymentsManagement from './pages/Admin/PaymentsManagement'
 import UserManagement from './pages/Admin/UserManagement'
 import AdminSettings from './pages/Admin/AdminSettings'
 import ContactSubmissions from './pages/Admin/ContactSubmissions'
@@ -156,6 +158,7 @@ const AppRoutes = () => {
         <Route path="terms" element={<AdminTerms />} />
         <Route path="privacy" element={<AdminPrivacy />} />
         <Route path="orders" element={<OrderManagement />} />
+        <Route path="payments" element={<PaymentsManagement />} />
         <Route path="users" element={<UserManagement />} />
         <Route path="contacts" element={<ContactSubmissions />} />
         <Route path="settings" element={<AdminSettings />} />
@@ -172,10 +175,12 @@ const App = () => {
         <WishlistProvider>
           <CurrencyProvider>
             <CartProvider>
-              <BrowserRouter>
-                <Toaster position="top-center" reverseOrder={false} />
-                <AppRoutes />
-              </BrowserRouter>
+              <HelmetProvider>
+                <BrowserRouter>
+                  <Toaster position="top-center" reverseOrder={false} />
+                  <AppRoutes />
+                </BrowserRouter>
+              </HelmetProvider>
             </CartProvider>
           </CurrencyProvider>
         </WishlistProvider>

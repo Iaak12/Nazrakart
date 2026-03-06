@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
     MdShoppingCart,
@@ -6,7 +6,8 @@ import {
     MdMenu,
     MdClose,
     MdPerson,
-    MdFavoriteBorder
+    MdFavoriteBorder,
+    MdFlashOn
 } from 'react-icons/md';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
@@ -16,12 +17,19 @@ import { useSettings } from '../../context/SettingsContext';
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [scrolled, setScrolled] = useState(false);
     const { user, logout, isAdmin } = useAuth();
     const { getCartCount } = useCart();
     const { wishlist } = useWishlist();
     const { settings } = useSettings();
     const navigate = useNavigate();
     const location = useLocation();
+
+    useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 20);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -38,12 +46,10 @@ const Navbar = () => {
     const [navLinks, setNavLinks] = useState([
         { name: 'TOP WEAR', path: '/shop?category=topwear' },
         { name: 'BOTTOM WEAR', path: '/shop?category=bottomwear' },
-        { name: 'SNEAKERS', path: '/shop?category=sneakers' },
         { name: 'ACCESSORIES', path: '/shop?category=accessories' },
-        { name: 'COLLECTIONS', path: '/shop?category=collections' },
     ]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const fetchCategories = async () => {
             try {
                 const res = await fetch(`${import.meta.env.VITE_API_URL}/api/categories`);
@@ -54,7 +60,7 @@ const Navbar = () => {
                             name: cat.name.toUpperCase(),
                             path: `/shop?category=${cat.slug || cat.name.toLowerCase()}`
                         }));
-                        setNavLinks(formattedLinks);
+                        setNavLinks(formattedLinks.slice(0, 6)); // Limit to keep it clean
                     }
                 }
             } catch (error) {
@@ -73,136 +79,133 @@ const Navbar = () => {
     const isActive = (path) => location.pathname + location.search === path;
 
     return (
-        <header className="sticky top-0 z-50 w-full bg-white shadow-sm flex flex-col font-roboto">
-            {/* Top Offers Strip */}
-            <div className="bg-tss-red text-white text-[11px] font-bold py-2 px-4 text-center tracking-widest uppercase cursor-pointer hover:underline">
-                DOWNLOAD APP & GET 10% OFF ON YOUR FIRST ORDER!
+        <header className={`fixed top-0 z-50 w-full transition-all duration-300 ${scrolled ? 'shadow-lg' : ''}`}>
+            {/* Top Info Bar */}
+            <div className="bg-tss-black text-white text-[10px] font-black py-1.5 px-4 flex justify-center items-center gap-4 tracking-widest uppercase">
+                <span className="flex items-center gap-1"><MdFlashOn className="text-tss-yellow" /> SHIRT OF THE DAY @ ₹399</span>
+                <span className="hidden sm:inline opacity-30">|</span>
+                <span className="hidden sm:inline">FREE SHIPPING ON ORDERS ABOVE ₹999</span>
+                <span className="hidden sm:inline opacity-30">|</span>
+                <Link to="/membership" className="text-tss-yellow hover:underline flex items-center gap-1">
+                    BECOME A TRIBE MEMBER
+                </Link>
             </div>
 
             {/* Main Navbar */}
-            <div className="border-b border-gray-200">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between items-center h-[70px]">
+            <div className="bg-white border-b border-gray-100">
+                <div className="tss-container">
+                    <div className="flex justify-between items-center h-16 md:h-20">
 
-                        {/* Mobile Menu Icon */}
-                        <button
-                            onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className="md:hidden p-2 text-gray-800"
-                        >
-                            {isMenuOpen ? <MdClose size={28} /> : <MdMenu size={28} />}
-                        </button>
+                        {/* Mobile Menu & Logo Group */}
+                        <div className="flex items-center gap-2 md:gap-0">
+                            <button
+                                onClick={() => setIsMenuOpen(true)}
+                                className="md:hidden p-2 text-tss-black hover:text-tss-red transition-colors"
+                            >
+                                <MdMenu size={28} />
+                            </button>
 
-                        {/* Top Gender Categories (Desktop only) */}
-                        <div className="hidden md:flex gap-8 items-center flex-1">
-                            {topCategories.map((cat) => (
-                                <Link
-                                    key={cat.name}
-                                    to={cat.path}
-                                    className={`text-[13px] font-bold tracking-widest uppercase transition-colors ${isActive(cat.path) ? 'text-tss-black border-b-2 border-tss-red pb-1' : 'text-gray-500 hover:text-tss-black'
-                                        }`}
-                                >
-                                    {cat.name}
-                                </Link>
-                            ))}
+                            <Link to="/" className="flex-shrink-0">
+                                {settings?.headerLogo ? (
+                                    <img src={settings.headerLogo} alt="Logo" className="h-8 md:h-12 w-auto object-contain" />
+                                ) : (
+                                    <h1 className="text-xl md:text-3xl font-black text-tss-red tracking-tighter">
+                                        NAZRA<span className="text-tss-black">KART</span>
+                                    </h1>
+                                )}
+                            </Link>
+
+                            {/* Desktop Gender Switcher */}
+                            <div className="hidden lg:flex items-center ml-10 gap-6">
+                                {topCategories.map((cat) => (
+                                    <Link
+                                        key={cat.name}
+                                        to={cat.path}
+                                        className={`text-[13px] font-black tracking-widest transition-all relative py-2 ${isActive(cat.path)
+                                                ? 'text-tss-red after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-tss-red'
+                                                : 'text-tss-black/60 hover:text-tss-red'
+                                            }`}
+                                    >
+                                        {cat.name}
+                                    </Link>
+                                ))}
+                            </div>
                         </div>
 
-                        {/* Logo */}
-                        <Link to="/" className="flex-shrink-0 flex items-center justify-center">
-                            {settings?.headerLogo ? (
-                                <img src={settings.headerLogo} alt="Store Logo" className="h-[40px] w-auto object-contain" />
-                            ) : (
-                                <span className="text-2xl font-black text-tss-red tracking-tighter uppercase font-ubuntu">
-                                    {settings?.storeName ? settings.storeName.toUpperCase() : (
-                                        <>NAZRA<span className="text-tss-black">KART</span></>
-                                    )}
-                                </span>
-                            )}
-                        </Link>
-
-                        {/* Right Section: Search & Icons */}
-                        <div className="flexitems-center justify-end gap-6 flex-1 flex">
-
-                            {/* Search (Desktop) */}
-                            <form onSubmit={handleSearch} className="hidden lg:block relative text-gray-600">
+                        {/* Search Bar - Centered on Desktop */}
+                        <div className="hidden md:flex flex-1 max-w-md mx-8">
+                            <form onSubmit={handleSearch} className="relative w-full group">
                                 <input
-                                    className="bg-[#f5f5f5] h-9 px-4 pr-10 rounded-sm text-sm focus:outline-none w-[200px] border border-transparent focus:border-gray-300 transition-colors"
                                     type="text"
-                                    placeholder="What are you looking for?"
+                                    placeholder="Search for products, themes etc."
+                                    className="w-full bg-tss-gray-100 h-10 px-4 pr-12 rounded-sm text-sm font-medium border-0 focus:ring-1 focus:ring-tss-red/20 focus:bg-white transition-all outline-none"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                 />
-                                <button type="submit" className="absolute right-0 top-0 mt-[8px] mr-3">
-                                    <MdSearch size={20} className="text-gray-500 hover:text-tss-red transition-colors" />
+                                <button type="submit" className="absolute right-0 top-0 h-full px-4 text-tss-gray-500 hover:text-tss-red">
+                                    <MdSearch size={22} />
                                 </button>
                             </form>
+                        </div>
 
-                            {/* Mobile Search Icon */}
-                            <button className="lg:hidden p-2 text-gray-800 hover:text-tss-red">
-                                <MdSearch size={24} />
-                            </button>
-
-                            {/* Divider */}
-                            <div className="hidden lg:block h-6 w-px bg-gray-200"></div>
-
-                            {/* Profile / Auth */}
+                        {/* Right Actions */}
+                        <div className="flex items-center gap-2 md:gap-6">
+                            {/* Profile Dropdown */}
                             <div className="group relative">
-                                <button className="p-1 text-gray-700 hover:text-tss-red flex items-center transition-colors">
-                                    <MdPerson size={24} />
+                                <button className="p-2 text-tss-black hover:text-tss-red transition-all transform hover:scale-110">
+                                    <MdPerson size={26} />
                                 </button>
-                                {/* Dropdown */}
-                                <div className="absolute right-0 top-full mt-2 w-48 bg-white shadow-xl rounded-md py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border border-gray-100 font-roboto">
-                                    {user ? (
-                                        <>
-                                            <div className="px-4 py-2 text-sm text-gray-700 border-b border-gray-100 font-medium">Hello, {user.name}</div>
-                                            <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-tss-red">My Profile</Link>
-                                            <Link to="/orders" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-tss-red">My Orders</Link>
-                                            {isAdmin() && (
-                                                <Link to="/admin" className="block px-4 py-2 text-sm text-tss-red font-bold hover:bg-red-50">Admin Dashboard</Link>
-                                            )}
-                                            <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-tss-red">Log Out</button>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Link to="/login" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-tss-red font-medium">Log In / Register</Link>
-                                            <Link to="/admin" className="block px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-tss-red">Admin Login</Link>
-                                        </>
-                                    )}
+                                <div className="absolute right-0 top-full pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[60]">
+                                    <div className="w-56 bg-white shadow-2xl rounded-sm border border-gray-100 py-3">
+                                        {user ? (
+                                            <>
+                                                <div className="px-5 py-2 border-b border-gray-50 mb-2">
+                                                    <p className="text-[10px] text-tss-gray-500 font-bold uppercase tracking-widest mb-1">Account</p>
+                                                    <p className="text-sm font-black text-tss-black truncate">{user.name}</p>
+                                                </div>
+                                                <Link to="/profile" className="block px-5 py-2.5 text-xs font-bold text-tss-gray-500 hover:text-tss-red hover:bg-tss-pink transition-colors">MY PROFILE</Link>
+                                                <Link to="/orders" className="block px-5 py-2.5 text-xs font-bold text-tss-gray-500 hover:text-tss-red hover:bg-tss-pink transition-colors">MY ORDERS</Link>
+                                                {isAdmin() && (
+                                                    <Link to="/admin" className="block px-5 py-2.5 text-xs font-black text-tss-red hover:bg-red-50">ADMIN PANEL</Link>
+                                                )}
+                                                <button onClick={handleLogout} className="w-full text-left px-5 py-2.5 text-xs font-bold text-tss-gray-500 hover:text-tss-red hover:bg-tss-pink transition-colors border-t border-gray-50 mt-1">LOGOUT</button>
+                                            </>
+                                        ) : (
+                                            <div className="px-4 py-2">
+                                                <Link to="/login" className="tss-button-primary w-full block text-center py-2 text-xs">LOGIN / REGISTER</Link>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Wishlist */}
-                            <Link to="/wishlist" className="p-1 text-gray-700 hover:text-tss-red relative hidden sm:flex items-center transition-colors">
-                                <MdFavoriteBorder size={24} />
+                            <Link to="/wishlist" className="p-2 text-tss-black hover:text-tss-red relative transition-all transform hover:scale-110">
+                                <MdFavoriteBorder size={26} />
                                 {wishlist?.length > 0 && (
-                                    <span className="absolute -top-1 -right-1 bg-tss-red text-white text-[10px] h-4 w-4 rounded-full flex items-center justify-center font-bold">
+                                    <span className="absolute top-1 right-1 bg-tss-red text-white text-[9px] h-4 w-4 rounded-full flex items-center justify-center font-black animate-bounce">
                                         {wishlist.length}
                                     </span>
                                 )}
                             </Link>
 
-                            {/* Cart */}
-                            <Link to="/cart" className="p-1 text-gray-700 hover:text-tss-red relative flex items-center transition-colors">
-                                <MdShoppingCart size={24} />
+                            <Link to="/cart" className="p-2 text-tss-black hover:text-tss-red relative transition-all transform hover:scale-110">
+                                <MdShoppingCart size={26} />
                                 {getCartCount() > 0 && (
-                                    <span className="absolute -top-1 -right-1 bg-tss-red text-white text-[10px] h-4 w-4 rounded-full flex items-center justify-center font-bold">
+                                    <span className="absolute top-1 right-1 bg-tss-red text-white text-[9px] h-4 w-4 rounded-full flex items-center justify-center font-black">
                                         {getCartCount()}
                                     </span>
                                 )}
                             </Link>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            {/* Bottom Menu Strip (Desktop) */}
-            <div className="hidden lg:block shadow-sm z-40 bg-white">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-center gap-10 h-[50px]">
+                    {/* Desktop Sub-Nav Category Strip */}
+                    <div className="hidden md:flex justify-center items-center h-10 gap-8 border-t border-gray-50 overflow-x-auto no-scrollbar">
                         {navLinks.map((link) => (
                             <Link
                                 key={link.name}
                                 to={link.path}
-                                className="text-[13px] font-bold text-gray-800 hover:text-tss-red transition-colors tracking-wide uppercase font-ubuntu"
+                                className="text-[11px] font-black text-tss-gray-500 hover:text-tss-red transition-all tracking-[0.15em] whitespace-nowrap"
                             >
                                 {link.name}
                             </Link>
@@ -211,76 +214,68 @@ const Navbar = () => {
                 </div>
             </div>
 
-            {/* Mobile Menu Drawer */}
+            {/* Mobile Drawer Overlay */}
             {isMenuOpen && (
-                <div className="md:hidden fixed inset-0 z-50 bg-black/50" onClick={() => setIsMenuOpen(false)}>
-                    <div
-                        className="w-4/5 max-w-sm bg-white h-full flex flex-col shadow-2xl"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        {/* Mobile User Header */}
-                        <div className="bg-gray-50 p-6 border-b flex items-center justify-between">
+                <div className="fixed inset-0 z-[100] bg-tss-black/60 backdrop-blur-sm transition-opacity duration-300" onClick={() => setIsMenuOpen(false)}>
+                    <div className="w-[85%] max-w-[320px] bg-white h-full flex flex-col shadow-2xl transform transition-transform duration-300 translate-x-0" onClick={e => e.stopPropagation()}>
+                        <div className="p-6 bg-tss-red text-white">
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-xl font-black tracking-tighter italic">NAZRAKART</h2>
+                                <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                                    <MdClose size={24} />
+                                </button>
+                            </div>
                             {user ? (
                                 <div>
-                                    <p className="text-lg font-bold text-gray-900">Hi, {user.name.split(' ')[0]}</p>
-                                    <p className="text-sm text-gray-500">{user.email}</p>
+                                    <p className="text-[10px] font-black opacity-80 mb-1 tracking-widest uppercase">Welcome back,</p>
+                                    <p className="text-lg font-black truncate">{user.name}</p>
                                 </div>
                             ) : (
-                                <Link to="/login" onClick={() => setIsMenuOpen(false)} className="text-lg font-bold text-tss-red">Log In / Sign Up</Link>
+                                <Link to="/login" onClick={() => setIsMenuOpen(false)} className="tss-button-primary !bg-white !text-tss-red w-full block text-center py-2.5 text-xs tracking-widest font-black">LOGIN / SIGNUP</Link>
                             )}
-                            <button onClick={() => setIsMenuOpen(false)} className="p-2 bg-gray-200 rounded-full text-gray-600">
-                                <MdClose size={20} />
-                            </button>
                         </div>
 
-                        {/* Mobile Primary Categories */}
-                        <div className="flex border-b border-gray-100">
-                            {topCategories.map(cat => (
-                                <Link
-                                    key={cat.name}
-                                    to={cat.path}
-                                    onClick={() => setIsMenuOpen(false)}
-                                    className="flex-1 py-3 text-center border-r last:border-0 font-bold text-sm text-gray-700 hover:bg-gray-50 hover:text-tss-red uppercase"
-                                >
-                                    {cat.name}
-                                </Link>
-                            ))}
+                        <div className="flex-1 overflow-y-auto py-4">
+                            <div className="px-6 mb-6">
+                                <p className="text-[10px] font-black text-tss-gray-500 tracking-widest mb-4 uppercase">Categories</p>
+                                <div className="space-y-4">
+                                    {navLinks.map(link => (
+                                        <Link
+                                            key={link.name}
+                                            to={link.path}
+                                            onClick={() => setIsMenuOpen(false)}
+                                            className="block text-sm font-black text-tss-black hover:text-tss-red transition-colors"
+                                        >
+                                            {link.name}
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="px-6 border-t border-gray-100 pt-6">
+                                <p className="text-[10px] font-black text-tss-gray-500 tracking-widest mb-4 uppercase">My Account</p>
+                                <div className="space-y-4">
+                                    <Link to="/orders" onClick={() => setIsMenuOpen(false)} className="block text-sm font-bold text-tss-black">MY ORDERS</Link>
+                                    <Link to="/wishlist" onClick={() => setIsMenuOpen(false)} className="block text-sm font-bold text-tss-black">MY WISHLIST</Link>
+                                    <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="block text-sm font-bold text-tss-black">CONTACT US</Link>
+                                    {isAdmin() && <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="block text-sm font-black text-tss-red">ADMIN DASHBOARD</Link>}
+                                </div>
+                            </div>
                         </div>
 
-                        {/* Mobile Links */}
-                        <div className="flex-1 overflow-y-auto pt-4 pb-20">
-                            {navLinks.map((link) => (
-                                <Link
-                                    key={link.name}
-                                    to={link.path}
-                                    onClick={() => setIsMenuOpen(false)}
-                                    className="block px-6 py-4 text-base font-semibold text-gray-800 hover:bg-gray-50 border-b border-gray-50"
-                                >
-                                    {link.name}
-                                </Link>
-                            ))}
-                            <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="block px-6 py-4 text-base font-semibold text-gray-800 hover:bg-gray-50 border-b border-gray-50">
-                                Contact Us
-                            </Link>
-
-                            {isAdmin() && (
-                                <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="block px-6 py-4 text-base font-bold text-tss-red bg-red-50 mb-2">
-                                    Admin Panel
-                                </Link>
-                            )}
-
-                            {user && (
-                                <button
-                                    onClick={() => { handleLogout(); setIsMenuOpen(false); }}
-                                    className="w-full text-left px-6 py-4 text-base font-semibold text-gray-500 hover:bg-gray-50"
-                                >
-                                    Log Out
+                        {user && (
+                            <div className="p-6 border-t border-gray-100">
+                                <button onClick={() => { handleLogout(); setIsMenuOpen(false); }} className="w-full text-center py-3 text-xs font-black text-tss-gray-500 border border-tss-gray-200 hover:bg-tss-gray-100 transition-colors uppercase tracking-widest">
+                                    LOGOUT
                                 </button>
-                            )}
-                        </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
+
+            {/* Space For Fixed Header */}
+            <div className={`h-[100px] md:h-[135px] ${scrolled ? '' : ''}`}></div>
         </header>
     );
 };

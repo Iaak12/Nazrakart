@@ -62,7 +62,39 @@ const SEED_DATA = {
             path: '/shop?theme=Star+Wars',
             color: 'from-gray-900 to-black'
         }
-    ]
+    ],
+    seo: {
+        home: {
+            metaTitle: 'NazraKart - Official Merchandise',
+            metaDescription: 'Shop the best official merchandise from NazraKart. Discover topwear, bottomwear, and accessories from your favorite franchises.',
+            metaKeywords: 'nazrakart, merchandise, marvel, dc, harry potter, t-shirts, oversized shirts, printed shirts'
+        },
+        about: {
+            metaTitle: 'About Us - NazraKart',
+            metaDescription: 'Learn about NazraKart, our passion for pop culture, and how we bring the best official merchandise to your doorstep.',
+            metaKeywords: 'about nazrakart, our story, official merchandise store'
+        },
+        contact: {
+            metaTitle: 'Contact Us - NazraKart',
+            metaDescription: 'Get in touch with NazraKart. We are here to help with your orders, inquiries, or feedback.',
+            metaKeywords: 'contact nazrakart, customer support, help desk'
+        },
+        shop: {
+            metaTitle: 'Shop All Products - NazraKart',
+            metaDescription: 'Browse all official merchandise at NazraKart. Filter by category, theme, and more to find exactly what you love.',
+            metaKeywords: 'shop merchandise, buy official merch, t-shirts, accessories'
+        },
+        faq: {
+            metaTitle: 'Frequently Asked Questions - NazraKart',
+            metaDescription: 'Find answers to common questions about shipping, returns, and placing orders at NazraKart.',
+            metaKeywords: 'nazrakart faq, shipping policy, return policy, help'
+        },
+        careers: {
+            metaTitle: 'Careers - NazraKart',
+            metaDescription: 'Join the NazraKart team. Explore our current job openings and help us build the ultimate fan destination.',
+            metaKeywords: 'jobs at nazrakart, careers, hiring, work with us'
+        }
+    }
 };
 
 // @route   GET /api/home
@@ -98,6 +130,7 @@ router.put('/', protect, admin, async (req, res) => {
         if (req.body.banners) home.banners = req.body.banners;
         if (req.body.categories) home.categories = req.body.categories;
         if (req.body.franchises) home.franchises = req.body.franchises;
+        if (req.body.seo) home.seo = req.body.seo;
 
         const updatedHome = await home.save();
         res.json(updatedHome);
