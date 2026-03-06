@@ -79,7 +79,7 @@ const Navbar = () => {
     const isActive = (path) => location.pathname + location.search === path;
 
     return (
-        <header className={`fixed top-0 z-50 w-full transition-all duration-300 ${scrolled ? 'shadow-lg' : ''}`}>
+        <header className={`fixed top-0 z-50 w-full transition-all duration-300 ${scrolled ? '' : ''}`}>
             {/* Top Info Bar */}
             <div className="bg-tss-black text-white text-[10px] font-black py-1.5 px-4 flex justify-center items-center gap-4 tracking-widest uppercase">
                 <span className="flex items-center gap-1"><MdFlashOn className="text-tss-yellow" /> SHIRT OF THE DAY @ ₹399</span>
@@ -122,8 +122,8 @@ const Navbar = () => {
                                         key={cat.name}
                                         to={cat.path}
                                         className={`text-[13px] font-black tracking-widest transition-all relative py-2 ${isActive(cat.path)
-                                                ? 'text-tss-red after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-tss-red'
-                                                : 'text-tss-black/60 hover:text-tss-red'
+                                            ? 'text-tss-red after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-tss-red'
+                                            : 'text-tss-black/60 hover:text-tss-red'
                                             }`}
                                     >
                                         {cat.name}
